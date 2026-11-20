@@ -9,8 +9,8 @@ import texto from '../assets/logo/texto.webp'
 const CAPAS = [
   { id: 'marco', src: marco, left: 19.537, top: 7.656, width: 67.544, height: 83.014 },
   { id: 'pavo', src: pavo, left: 10.845, top: 22.727, width: 33.892, height: 58.931 },
-  { id: 'monograma', src: monograma, left: 26.794, top: 19.139, width: 37.002, height: 40.51 },
-  { id: 'texto', src: texto, left: 44.657, top: 22.329, width: 41.228, height: 44.817 },
+  { id: 'monograma', src: monograma, left: 26.794, top: 19.139, width: 35.726, height: 40.51 },
+  { id: 'texto', src: texto, left: 44.657, top: 24.322, width: 41.069, height: 42.823 },
 ]
 
 // Destellos alrededor del aro: [left %, top %, tamaño px, retraso s]
