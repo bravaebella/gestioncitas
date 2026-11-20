@@ -16,7 +16,7 @@ npm run build    # deja la app lista en dist/
 Cada `push` a `main` compila la app y la publica sola (`.github/workflows/deploy.yml`).
 Una sola vez, en el repo: **Settings → Pages → Source: GitHub Actions**.
 
-Queda en `https://frankshirips.github.io/brava-e-bella/`.
+Queda en `https://bravaebella.github.io/gestioncitas/`.
 
 En el iPhone: abrir esa dirección en Safari → Compartir → **Agregar a inicio**.
 Se abre a pantalla completa y funciona sin internet.
