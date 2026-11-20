@@ -420,13 +420,63 @@ textarea.input { height: auto; min-height: 64px; padding: 10px 12px; resize: ver
 }
 @keyframes barrido { from { --barrido: 0deg; } to { --barrido: 361deg; } }
 
-/* El pavo real aparece de la corona a las plumas */
-.capa-pavo {
+/* El pavo real: la cola aparece de arriba abajo... */
+.capa-pavo-cola {
   -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 60%);
   mask-image: linear-gradient(to bottom, #000 40%, transparent 60%);
   -webkit-mask-size: 100% 250%; mask-size: 100% 250%;
   -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  animation: pavo 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.45s both;
+  animation: pavo 1.3s cubic-bezier(0.4, 0, 0.2, 1) 0.45s both;
+}
+
+/* ...levanta el cuello y luego asiente... */
+.capa-pavo-cuello {
+  animation: cuello 1.05s cubic-bezier(0.3, 0.7, 0.3, 1.2) 0.55s both, asentir 0.9s ease-in-out 2.5s;
+}
+@keyframes cuello {
+  from { opacity: 0; transform: translateY(8%) rotate(-14deg); }
+  35% { opacity: 1; }
+  70% { transform: translateY(-1%) rotate(3deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes asentir {
+  0%, 100% { transform: none; }
+  40% { transform: rotate(-4deg); }
+  70% { transform: rotate(1.5deg); }
+}
+
+/* ...abre las plumas en abanico, una tras otra, y las mece */
+.capa-pluma-1, .capa-pluma-2, .capa-pluma-3 {
+  animation: abanico 0.95s cubic-bezier(0.25, 0.8, 0.3, 1.15) both, mecer 1.3s ease-in-out;
+}
+.capa-pluma-1 { animation-delay: 0.95s, 2.3s; }
+.capa-pluma-2 { animation-delay: 1.1s, 2.38s; }
+.capa-pluma-3 { animation-delay: 1.25s, 2.46s; }
+@keyframes abanico {
+  from { opacity: 0; transform: rotate(-38deg) scale(0.45); }
+  30% { opacity: 1; }
+  70% { transform: rotate(5deg) scale(1.04); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes mecer {
+  0%, 100% { transform: none; }
+  35% { transform: rotate(2.5deg); }
+  70% { transform: rotate(-1.5deg); }
+}
+
+/* Brillo dorado en los ojos de las plumas */
+.ojo-pluma {
+  position: absolute; width: 9%; aspect-ratio: 1; border-radius: 50%; pointer-events: none;
+  transform: translate(-50%, -50%) scale(0); opacity: 0;
+  background: radial-gradient(circle, rgba(255, 236, 196, 0.95) 0 12%, rgba(233, 201, 143, 0.55) 30%, transparent 68%);
+  mix-blend-mode: screen;
+  animation: ojo 0.9s ease-out both;
+}
+:root[data-theme='light'] .ojo-pluma { mix-blend-mode: normal; background: radial-gradient(circle, rgba(255, 246, 225, 0.9) 0 12%, rgba(214, 160, 82, 0.4) 32%, transparent 68%); }
+@keyframes ojo {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  40% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.6); }
 }
 @keyframes pavo {
   from { -webkit-mask-position: 0 100%; mask-position: 0 100%; transform: translateY(14px); opacity: 0; }
@@ -479,6 +529,7 @@ textarea.input { height: auto; min-height: 64px; padding: 10px 12px; resize: ver
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .ojo-pluma { display: none; }
   .splash.saliendo { animation-duration: 0.2s; }
   .splash-brillo-fondo { animation: none; }
 }
