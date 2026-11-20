@@ -74,6 +74,7 @@ create index citas_clienta_idx on brava.citas (clienta_id);
 create table brava.cita_tratamientos (
   cita_id        uuid not null references brava.citas (id) on delete cascade,
   tratamiento_id uuid not null references brava.tratamientos (id),
+  tipo           text not null check (tipo in ('manicura', 'pedicura')),
   nombre         text not null,
   duracion_min   integer not null check (duracion_min > 0),
   precio         numeric(10, 2) not null check (precio >= 0),

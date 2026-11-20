@@ -54,7 +54,15 @@ function cargar(): DB {
     const raw = localStorage.getItem(CLAVE)
     if (raw) {
       const db = JSON.parse(raw) as DB
-      return { ...dbVacia(), ...db, ajustes: { ...AJUSTES_INICIALES, ...db.ajustes } }
+      const tipoDe = new Map(db.tratamientos.map((t) => [t.id, t.tipo]))
+      const citas = db.citas.map((c) => ({
+        ...c,
+        items: c.items.map((i) => ({
+          ...i,
+          tipo: i.tipo ?? tipoDe.get(i.tratamientoId) ?? (c.tipo === 'pedicura' ? 'pedicura' : 'manicura'),
+        })),
+      }))
+      return { ...dbVacia(), ...db, citas, ajustes: { ...AJUSTES_INICIALES, ...db.ajustes } }
     }
   } catch {
     /* sin almacenamiento: se trabaja en memoria */
@@ -109,7 +117,7 @@ function crearAcciones(get: () => DB, set: (db: DB) => void) {
         inicio: d.inicio.toISOString(),
         fin: fin.toISOString(),
         estado: previa?.estado === 'atendida' ? 'atendida' : 'agendada',
-        items: d.items.map((t) => ({ tratamientoId: t.id, nombre: t.nombre, duracionMin: t.duracionMin, precio: t.precio })),
+        items: d.items.map((t) => ({ tratamientoId: t.id, tipo: t.tipo, nombre: t.nombre, duracionMin: t.duracionMin, precio: t.precio })),
         total: d.items.reduce((s, i) => s + i.precio, 0),
         notas: d.notas.trim(),
         avisos: cambioHora ? {} : (previa?.avisos ?? {}),

@@ -69,7 +69,7 @@ export function datosDeEjemplo(catalogo: Tratamiento[]) {
       inicio: inicio.toISOString(),
       fin: fin.toISOString(),
       estado: fin.getTime() < ahora ? 'atendida' : 'agendada',
-      items: items.map((t) => ({ tratamientoId: t.id, nombre: t.nombre, duracionMin: t.duracionMin, precio: t.precio })),
+      items: items.map((t) => ({ tratamientoId: t.id, tipo: t.tipo, nombre: t.nombre, duracionMin: t.duracionMin, precio: t.precio })),
       total: items.reduce((s, t) => s + t.precio, 0),
       notas: '',
       avisos: {},

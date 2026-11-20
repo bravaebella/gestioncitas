@@ -29,6 +29,7 @@ export interface Tratamiento {
 /** Copia del tratamiento al momento de agendar: si luego cambia el precio, la cita no cambia. */
 export interface ItemCita {
   tratamientoId: string
+  tipo: TipoTratamiento
   nombre: string
   duracionMin: number
   precio: number

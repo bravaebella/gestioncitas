@@ -1,5 +1,5 @@
 import { dinero, ETIQUETA_TIPO, fechaLarga, hora, mayus } from './format'
-import type { Ajustes, Cita, Clienta, MinutosAviso } from './types'
+import type { Ajustes, Cita, Clienta, MinutosAviso, TipoTratamiento } from './types'
 
 /** Deja solo dígitos y agrega el código de país si el número es local. */
 export function numeroInternacional(telefono: string, codigoPais: string) {
@@ -21,7 +21,7 @@ const RELOJES = ['🕛', '🕐', '🕑', '🕒', '🕓', '🕔', '🕕', '🕖',
 const RELOJES_MEDIA = ['🕧', '🕜', '🕝', '🕞', '🕟', '🕠', '🕡', '🕢', '🕣', '🕤', '🕥', '🕦']
 const reloj = (d: Date) => (d.getMinutes() >= 30 ? RELOJES_MEDIA : RELOJES)[d.getHours() % 12]
 
-const ICONO_TIPO = { manicura: '💅', pedicura: '🦶', ambas: '💅🦶' } as const
+const ICONO_TIPO: Record<TipoTratamiento, string> = { manicura: '💅', pedicura: '🦶' }
 
 /** En WhatsApp, *texto* sale en negrita; por SMS se manda sin asteriscos. */
 function formato(lineas: (string | false)[], aj: Ajustes) {
@@ -29,8 +29,14 @@ function formato(lineas: (string | false)[], aj: Ajustes) {
   return aj.canal === 'whatsapp' ? texto : texto.replace(/\*/g, '')
 }
 
-function listaTratamientos(cita: Cita) {
-  return cita.items.map((i) => `   • ${i.nombre}`)
+/** Un bloque por servicio: "💅 *Manicura*" y debajo sus tratamientos con viñetas. */
+function bloquesServicio(cita: Cita) {
+  const tipos: TipoTratamiento[] = cita.tipo === 'ambas' ? ['manicura', 'pedicura'] : [cita.tipo]
+  return tipos.flatMap((t) => {
+    const items = cita.items.filter((i) => (cita.tipo === 'ambas' ? i.tipo === t : true))
+    if (!items.length) return []
+    return [`${ICONO_TIPO[t]} *${ETIQUETA_TIPO[t]}*`, ...items.map((i) => `   • ${i.nombre}`)]
+  })
 }
 
 export function textoConfirmacion(cita: Cita, clienta: Clienta, aj: Ajustes) {
@@ -43,8 +49,7 @@ export function textoConfirmacion(cita: Cita, clienta: Clienta, aj: Ajustes) {
     '',
     `📅 ${mayus(fechaLarga(ini))}`,
     `${reloj(ini)} ${hora(ini)} a ${hora(fin)}`,
-    `${ICONO_TIPO[cita.tipo]} ${ETIQUETA_TIPO[cita.tipo]}`,
-    ...listaTratamientos(cita),
+    ...bloquesServicio(cita),
     `💰 Total: *${dinero(cita.total, aj.moneda)}*`,
     '',
     `📍 ${aj.nombreEstudio}`,
@@ -62,7 +67,7 @@ export function textoRecordatorio(cita: Cita, clienta: Clienta, aj: Ajustes, min
     min === 60 ? '⏰ *Te recordamos tu cita de hoy*' : '⏳ *Tu cita es en 30 minutos*',
     '',
     `${reloj(ini)} ${hora(ini)}`,
-    `${ICONO_TIPO[cita.tipo]} ${ETIQUETA_TIPO[cita.tipo]}: ${cita.items.map((i) => i.nombre).join(', ')}`,
+    ...bloquesServicio(cita),
     `📍 ${aj.nombreEstudio}`,
     '',
     min === 60 ? '¡Te esperamos! 💖' : 'Ya casi está todo listo para ti 💅',
