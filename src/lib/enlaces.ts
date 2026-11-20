@@ -70,7 +70,7 @@ export function textoRecordatorio(cita: Cita, clienta: Clienta, aj: Ajustes, min
     ...bloquesServicio(cita),
     `📍 ${aj.nombreEstudio}`,
     '',
-    min === 60 ? '¡Te esperamos! 💖' : 'Ya casi está todo listo para ti 💅',
+    min === 60 ? '¡Te esperamos! 💖' : 'Ya todo está listo para ti 💅',
   ], aj)
 }
 
