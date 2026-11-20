@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Splash } from './components/Splash'
 import { Icon, UICtx, type AbrirNuevaCita, type UI } from './components/ui'
 import { StoreProvider, useStore } from './lib/store'
 import { Agenda } from './screens/Agenda'
@@ -43,7 +44,7 @@ function AplicarTema() {
     const aplicar = () => {
       const oscuro = tema === 'oscuro' || (tema === 'auto' && mq.matches)
       document.documentElement.dataset.theme = oscuro ? 'dark' : 'light'
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', oscuro ? '#150a11' : '#fbf3f1')
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', oscuro ? '#0e0a0b' : '#fbf3f1')
     }
     aplicar()
     mq.addEventListener('change', aplicar)
@@ -57,6 +58,8 @@ function Shell() {
   const [form, setForm] = useState<AbrirNuevaCita | null>(null)
   const [detalle, setDetalle] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
+  const [splash, setSplash] = useState(true)
+  const cerrarSplash = useCallback(() => setSplash(false), [])
 
   useEffect(() => {
     const cambio = () => { setLoc(leerRuta()); window.scrollTo(0, 0) }
@@ -105,6 +108,7 @@ function Shell() {
         )}
         {detalle && <CitaDetalle id={detalle} onClose={cerrarDetalle} />}
         {toast && <div className="toast" role="status">{toast}</div>}
+        {splash && <Splash onDone={cerrarSplash} />}
       </div>
     </UICtx.Provider>
   )

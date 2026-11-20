@@ -130,7 +130,7 @@ export function Hoy() {
                 const enviado = proxima.avisos[m]
                 const cuando = new Date(new Date(proxima.inicio).getTime() - m * 60000)
                 return (
-                  <span key={m} className="tag" style={{ color: enviado ? 'var(--on-color)' : 'var(--dark-sub)' }}>
+                  <span key={m} className="tag" style={{ color: enviado ? 'var(--on-deep)' : 'var(--dark-sub)' }}>
                     <Icon name={enviado ? 'check' : 'clock'} size={14} stroke={2} />
                     {enviado ? `Aviso ${m === 60 ? '1 h' : '30 min'} enviado` : `Aviso ${m === 60 ? '1 h' : '30 min'} a las ${hora(cuando)}`}
                   </span>

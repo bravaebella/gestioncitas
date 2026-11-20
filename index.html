@@ -16,7 +16,7 @@
         var t = (JSON.parse(localStorage.getItem('brava-db-v1') || '{}').ajustes || {}).tema || 'auto'
         var o = t === 'oscuro' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches)
         document.documentElement.dataset.theme = o ? 'dark' : 'light'
-        document.querySelector('meta[name="theme-color"]').setAttribute('content', o ? '#150a11' : '#fbf3f1')
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', o ? '#0e0a0b' : '#fbf3f1')
       } catch (e) {}
     </script>
   </head>
