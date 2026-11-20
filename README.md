@@ -28,7 +28,7 @@ Por ahora todo se guarda en el teléfono:
 - Citas, clientas, tratamientos, gastos y ajustes: `localStorage` (`src/lib/store.tsx`).
 - Fotos y videos del portafolio: IndexedDB (`src/lib/media.ts`).
 
-Hay respaldo manual en Ajustes (descargar y restaurar un `.json`, sin fotos ni videos).
+Hay respaldo manual en Ajustes (guardar y restaurar un `.json`, sin fotos ni videos). En iPhone se guarda con la hoja de compartir.
 
 ## Conectar Supabase después
 

@@ -155,9 +155,12 @@ export function Ajustes() {
       </Seccion>
 
       <Seccion titulo="Respaldo"
-        nota="Por ahora los datos viven solo en este teléfono. Descarga un respaldo de vez en cuando; las fotos y videos no van incluidos.">
+        nota="Por ahora los datos viven solo en este teléfono. Guarda un respaldo de vez en cuando (por ejemplo en Archivos); las fotos y videos no van incluidos.">
         <div className="grid-2">
-          <button type="button" className="btn" onClick={() => exportarRespaldo(db)}>Descargar respaldo</button>
+          <button type="button" className="btn" onClick={async () => {
+            const r = await exportarRespaldo(db)
+            if (r === 'descargado') ui.avisar('Respaldo descargado')
+          }}>Guardar respaldo</button>
           <button type="button" className="btn" onClick={() => archivo.current?.click()}>Restaurar respaldo</button>
         </div>
         <input ref={archivo} type="file" accept="application/json,.json" className="hidden-input" tabIndex={-1} aria-hidden="true"

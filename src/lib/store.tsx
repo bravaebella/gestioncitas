@@ -246,14 +246,29 @@ export function useStore() {
   return v
 }
 
-export function exportarRespaldo(db: DB) {
+/**
+ * En la app instalada en iPhone las descargas no funcionan: se usa la hoja de
+ * compartir del sistema ("Guardar en Archivos", WhatsApp, correo…).
+ */
+export async function exportarRespaldo(db: DB): Promise<'compartido' | 'descargado' | 'cancelado'> {
+  const nombre = `brava-respaldo-${new Date().toISOString().slice(0, 10)}.json`
   const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' })
+  const archivo = new File([blob], nombre, { type: 'application/json' })
+  if (navigator.canShare?.({ files: [archivo] })) {
+    try {
+      await navigator.share({ files: [archivo], title: 'Respaldo Brava e\' Bella' })
+      return 'compartido'
+    } catch {
+      return 'cancelado'
+    }
+  }
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `brava-respaldo-${new Date().toISOString().slice(0, 10)}.json`
+  a.download = nombre
   document.body.appendChild(a)
   a.click()
   a.remove()
   setTimeout(() => URL.revokeObjectURL(url), 10000)
+  return 'descargado'
 }
