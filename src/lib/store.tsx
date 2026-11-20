@@ -22,6 +22,7 @@ export const AJUSTES_INICIALES: Ajustes = {
   apertura: '09:00',
   cierre: '18:00',
   diasCerrados: [0],
+  tema: 'auto',
 }
 
 // Catálogo de arranque: precios y tiempos de ejemplo, se cambian en Ajustes.

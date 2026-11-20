@@ -45,6 +45,11 @@ export function Ajustes() {
         <a className="icon-btn" href="#hoy" aria-label="Volver a Hoy"><Icon name="back" size={18} /></a>
       </Header>
 
+      <Seccion titulo="Apariencia" nota={aj.tema === 'auto' ? 'Cambia sola cuando el iPhone pasa a modo oscuro.' : undefined}>
+        <Segmented label="Apariencia" value={aj.tema} onChange={(v) => acc.guardarAjustes({ tema: v })}
+          options={[{ value: 'auto', label: 'Automático' }, { value: 'claro', label: 'Claro' }, { value: 'oscuro', label: 'Oscuro' }]} />
+      </Seccion>
+
       <Seccion titulo="Calendario del teléfono">
         <div className="grid-2" role="radiogroup" aria-label="Calendario">
           {calendarios.map((c) => {
@@ -127,7 +132,7 @@ export function Ajustes() {
                   <span className="row-end">{dinero(t.precio, aj.moneda)}</span>
                 </button>
               ))}
-              <button type="button" className="row" style={{ color: 'var(--wine)', fontWeight: 600, minHeight: 46 }}
+              <button type="button" className="row" style={{ color: 'var(--wine-text)', fontWeight: 600, minHeight: 46 }}
                 onClick={() => setEditando({ id: uid(), tipo: g.tipo, nombre: '', duracionMin: 30, precio: 0, activo: true, orden: lista.length + 1 })}>
                 <Icon name="plus" size={16} stroke={2.2} /> Agregar a {g.titulo.toLowerCase()}
               </button>

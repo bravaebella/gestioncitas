@@ -92,8 +92,8 @@ export function Finanzas() {
         <div className="section-head">
           <h2 className="section-title">Por semana</h2>
           <div className="legend">
-            <span><i style={{ background: 'var(--wine)', borderRadius: 3 }} />Ingresos</span>
-            <span><i style={{ background: 'var(--ink)', borderRadius: 3 }} />Gastos</span>
+            <span><i style={{ background: 'var(--c-mani)', borderRadius: 3 }} />Ingresos</span>
+            <span><i style={{ background: 'var(--c-ambas)', borderRadius: 3 }} />Gastos</span>
           </div>
         </div>
         {filas.map((f) => (
@@ -101,11 +101,11 @@ export function Finanzas() {
             <span className="label" style={{ width: 54, flexShrink: 0 }}>{f.etiqueta}</span>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <i className="hbar" style={{ width: `${(f.ing / maxSemana) * 72}%`, background: 'var(--wine)' }} />
+                <i className="hbar" style={{ width: `${(f.ing / maxSemana) * 72}%`, background: 'var(--c-mani)' }} />
                 <span style={{ fontSize: 12, fontWeight: 500 }}>{dinero(f.ing, aj.moneda)}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <i className="hbar" style={{ width: `${(f.egr / maxSemana) * 72}%`, background: 'var(--ink)' }} />
+                <i className="hbar" style={{ width: `${(f.egr / maxSemana) * 72}%`, background: 'var(--c-ambas)' }} />
                 <span className="label">{dinero(f.egr, aj.moneda)}</span>
               </div>
             </div>

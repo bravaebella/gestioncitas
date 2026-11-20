@@ -7,6 +7,7 @@ export type EstadoCita = 'agendada' | 'atendida' | 'cancelada' | 'no_asistio'
 export type Calendario = 'google' | 'iphone'
 export type Canal = 'whatsapp' | 'sms'
 export type MinutosAviso = 60 | 30
+export type Tema = 'auto' | 'claro' | 'oscuro'
 
 export interface Clienta {
   id: string
@@ -79,6 +80,7 @@ export interface Ajustes {
   apertura: string // HH:MM
   cierre: string // HH:MM
   diasCerrados: number[] // 0 = domingo
+  tema: Tema
 }
 
 export interface DB {

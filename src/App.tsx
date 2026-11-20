@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Icon, UICtx, type AbrirNuevaCita, type UI } from './components/ui'
-import { StoreProvider } from './lib/store'
+import { StoreProvider, useStore } from './lib/store'
 import { Agenda } from './screens/Agenda'
 import { Ajustes } from './screens/Ajustes'
 import { CitaDetalle } from './screens/CitaDetalle'
@@ -35,6 +35,23 @@ export default function App() {
   )
 }
 
+function AplicarTema() {
+  const { db } = useStore()
+  const tema = db.ajustes.tema
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const aplicar = () => {
+      const oscuro = tema === 'oscuro' || (tema === 'auto' && mq.matches)
+      document.documentElement.dataset.theme = oscuro ? 'dark' : 'light'
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', oscuro ? '#150a11' : '#fbf3f1')
+    }
+    aplicar()
+    mq.addEventListener('change', aplicar)
+    return () => mq.removeEventListener('change', aplicar)
+  }, [tema])
+  return null
+}
+
 function Shell() {
   const [loc, setLoc] = useState(leerRuta)
   const [form, setForm] = useState<AbrirNuevaCita | null>(null)
@@ -64,6 +81,7 @@ function Shell() {
 
   return (
     <UICtx.Provider value={ui}>
+      <AplicarTema />
       <div className="app">
         {loc.ruta === 'hoy' && <Hoy />}
         {loc.ruta === 'agenda' && <Agenda key={loc.d ?? 'agenda'} diaInicial={loc.d} />}

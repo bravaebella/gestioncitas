@@ -6,7 +6,7 @@ import { useAhora } from '../lib/hooks'
 import { useStore } from '../lib/store'
 import type { Cita, MinutosAviso, TipoCita } from '../lib/types'
 
-export const COLOR_TIPO: Record<TipoCita, string> = { manicura: '#9E1B4B', pedicura: '#A9BFA0', ambas: '#2A1220' }
+export const COLOR_TIPO: Record<TipoCita, string> = { manicura: 'var(--c-mani)', pedicura: 'var(--c-pedi)', ambas: 'var(--c-ambas)' }
 
 export function Hoy() {
   const { db, acc } = useStore()
@@ -60,11 +60,11 @@ export function Hoy() {
     const i = Math.max(abre, new Date(c.inicio).getTime())
     const f = Math.min(cierra, new Date(c.fin).getTime())
     if (f <= cursor) continue
-    if (i > cursor) segmentos.push({ min: (i - cursor) / 60000, color: '#F3E6E6' })
+    if (i > cursor) segmentos.push({ min: (i - cursor) / 60000, color: 'var(--line-soft)' })
     segmentos.push({ min: (f - Math.max(i, cursor)) / 60000, color: COLOR_TIPO[c.tipo] })
     cursor = f
   }
-  if (cierra > cursor) segmentos.push({ min: (cierra - cursor) / 60000, color: '#F3E6E6' })
+  if (cierra > cursor) segmentos.push({ min: (cierra - cursor) / 60000, color: 'var(--line-soft)' })
 
   const manana = sumarDias(hoy, 1)
   const citasManana = citasDelDia(db, manana, true)
@@ -91,7 +91,7 @@ export function Hoy() {
           </div>
           <div className="list">
             {pendientes.map(({ cita, min }) => (
-              <div key={cita.id + min} className="row" style={{ borderBottomColor: '#efc7d3' }}>
+              <div key={cita.id + min} className="row" style={{ borderBottomColor: 'var(--alert-line)' }}>
                 <span className="row-main">
                   <span className="row-title">{nombre(cita)}</span>
                   <span className="row-sub">Aviso de {min === 60 ? '1 hora' : '30 min'} · cita a las {hora(new Date(cita.inicio))}</span>
@@ -130,7 +130,7 @@ export function Hoy() {
                 const enviado = proxima.avisos[m]
                 const cuando = new Date(new Date(proxima.inicio).getTime() - m * 60000)
                 return (
-                  <span key={m} className="tag" style={{ color: enviado ? '#fff' : 'var(--dark-sub)' }}>
+                  <span key={m} className="tag" style={{ color: enviado ? 'var(--on-color)' : 'var(--dark-sub)' }}>
                     <Icon name={enviado ? 'check' : 'clock'} size={14} stroke={2} />
                     {enviado ? `Aviso ${m === 60 ? '1 h' : '30 min'} enviado` : `Aviso ${m === 60 ? '1 h' : '30 min'} a las ${hora(cuando)}`}
                   </span>

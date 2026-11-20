@@ -15,7 +15,7 @@ export function ConfirmButton({
       type="button"
       className={className}
       aria-label={armado ? confirmar : ariaLabel}
-      style={armado ? { background: '#8a1c2c', borderColor: '#8a1c2c', color: '#fff' } : undefined}
+      style={armado ? { background: 'var(--danger-bg)', borderColor: 'var(--danger-bg)', color: '#fff' } : undefined}
       onClick={() => (armado ? (setArmado(false), onConfirm()) : setArmado(true))}
     >
       {armado ? confirmar : children}
