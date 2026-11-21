@@ -33,9 +33,9 @@ Hay respaldo manual en Ajustes (guardar y restaurar un `.json`, sin fotos ni vid
 ## Conectar Supabase después
 
 El modelo de datos (`src/lib/types.ts`) es el mismo del esquema `brava`
-(`brava_schema.sql`). Para conectar:
+(`supabase/brava_schema.sql`, ya aplicado en SCH-CRM). Para conectar:
 
-1. Aplicar `brava_schema.sql` en el proyecto y agregar `brava` a los esquemas expuestos de la API.
+1. Agregar `brava` a los esquemas expuestos de la API (Settings → Data API).
 2. Cambiar las acciones de `src/lib/store.tsx` por llamadas a `supabase.schema('brava')`.
    Las pantallas no cambian.
 3. Cambiar `src/lib/media.ts` por el bucket `brava-portafolio`.
