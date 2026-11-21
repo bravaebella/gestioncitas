@@ -80,9 +80,7 @@ export function Hoy() {
 
   return (
     <main className="screen">
-      <Header title={titulo} sub={sub}>
-        <a className="icon-btn" href="#ajustes" aria-label="Ajustes"><Icon name="gear" /></a>
-      </Header>
+      <Header title={titulo} sub={sub} />
 
       {pendientes.length > 0 && (
         <section className="alert-card" aria-label="Avisos por enviar">

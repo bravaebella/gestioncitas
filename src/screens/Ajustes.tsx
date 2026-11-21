@@ -36,9 +36,7 @@ export function Ajustes() {
 
   return (
     <main className="screen">
-      <Header title="Ajustes" sub={aj.nombreEstudio}>
-        <a className="icon-btn" href="#hoy" aria-label="Volver a Hoy"><Icon name="back" size={18} /></a>
-      </Header>
+      <Header title="Configuración" sub={aj.nombreEstudio} />
 
       <Seccion titulo="Apariencia" nota={aj.tema === 'auto' ? 'Cambia sola cuando el iPhone pasa a modo oscuro.' : undefined}>
         <Segmented label="Apariencia" value={aj.tema} onChange={(v) => acc.guardarAjustes({ tema: v })}

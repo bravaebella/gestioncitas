@@ -49,6 +49,9 @@ export function Acceso({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, sesion === undefined])
 
+  // Solo en desarrollo local (npm run dev con VITE_SIN_ACCESO=1): ver pantallas sin entrar.
+  if (import.meta.env.DEV && import.meta.env.VITE_SIN_ACCESO === '1') return <>{children}</>
+
   // Sin señal pero con sesión guardada: se abre con la copia del teléfono.
   if (acceso === 'miembro' || (acceso === 'sin_conexion' && sesion)) {
     if (modo === 'nueva') return <Marco><NuevaClave onListo={() => setModo('entrar')} /></Marco>

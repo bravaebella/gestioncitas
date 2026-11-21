@@ -14,7 +14,7 @@ import { Portafolio } from './screens/Portafolio'
 
 type Ruta = 'hoy' | 'agenda' | 'portafolio' | 'finanzas' | 'ajustes'
 
-// Rutas: #hoy, #agenda, #agenda-2026-11-21, #portafolio, #finanzas, #ajustes
+// Rutas: #hoy, #agenda, #agenda-2026-11-21, #portafolio, #finanzas, #ajustes (las dos últimas desde «Más»)
 function leerRuta(): { ruta: Ruta; d?: string } {
   const h = window.location.hash.replace(/^#\/?/, '')
   const m = h.match(/^agenda-(\d{4}-\d{2}-\d{2})$/)
@@ -27,7 +27,13 @@ const NAV: { ruta: Ruta; label: string; icon: string }[] = [
   { ruta: 'hoy', label: 'Hoy', icon: 'sun' },
   { ruta: 'agenda', label: 'Agenda', icon: 'cal' },
   { ruta: 'portafolio', label: 'Portafolio', icon: 'photo' },
-  { ruta: 'finanzas', label: 'Finanzas', icon: 'chart' },
+]
+
+// Módulos del menú «Más». Los nuevos se agregan aquí.
+const MAS: { ruta?: Ruta; label: string; sub: string; icon: string }[] = [
+  { ruta: 'finanzas', label: 'Finanzas', sub: 'Ingresos, gastos y ganancia del mes', icon: 'chart' },
+  { label: 'Club de fidelización', sub: 'Próximamente: sellos, premios y promociones', icon: 'gift' },
+  { ruta: 'ajustes', label: 'Configuración', sub: 'Tratamientos, horario, calendario y cuenta', icon: 'gear' },
 ]
 
 export default function App() {
@@ -67,6 +73,7 @@ function Shell() {
   const [form, setForm] = useState<AbrirNuevaCita | null>(null)
   const [detalle, setDetalle] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
+  const [mas, setMas] = useState(false)
   useEffect(() => {
     const aviso = (e: Event) => setToast((e as CustomEvent<string>).detail)
     window.addEventListener('brava-aviso', aviso)
@@ -111,6 +118,11 @@ function Shell() {
               <Icon name="plus" size={24} stroke={2.2} />
             </button>
             {NAV.slice(2).map((n) => <NavLink key={n.ruta} {...n} activa={loc.ruta === n.ruta} />)}
+            <button type="button" className="nav-btn" aria-haspopup="dialog" aria-expanded={mas}
+              aria-current={MAS.some((m) => m.ruta === loc.ruta) ? 'page' : undefined} onClick={() => setMas(true)}>
+              <Icon name="more" size={22} stroke={2} />
+              <span>Más</span>
+            </button>
           </div>
         </nav>
 
@@ -119,6 +131,25 @@ function Shell() {
             onGuardada={(id, nueva) => { setForm(null); setDetalle(id); setToast(nueva ? 'Cita agendada' : 'Cita actualizada') }} />
         )}
         {detalle && <CitaDetalle id={detalle} onClose={cerrarDetalle} />}
+        {mas && (
+          <Sheet title="Más" onClose={() => setMas(false)}>
+            <div className="card list">
+              {MAS.map((m) => m.ruta ? (
+                <a key={m.label} className="row menu-row" href={`#${m.ruta}`} onClick={() => setMas(false)}
+                  aria-current={loc.ruta === m.ruta ? 'page' : undefined}>
+                  <span className="menu-icon"><Icon name={m.icon} size={20} /></span>
+                  <span className="row-main"><span className="row-title">{m.label}</span><span className="row-sub">{m.sub}</span></span>
+                  <Icon name="next" size={18} />
+                </a>
+              ) : (
+                <div key={m.label} className="row menu-row" aria-disabled="true">
+                  <span className="menu-icon"><Icon name={m.icon} size={20} /></span>
+                  <span className="row-main"><span className="row-title">{m.label}</span><span className="row-sub">{m.sub}</span></span>
+                </div>
+              ))}
+            </div>
+          </Sheet>
+        )}
         <DatosDelTelefono />
         {toast && <div className="toast" role="status">{toast}</div>}
       </div>
