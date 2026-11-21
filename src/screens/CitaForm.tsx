@@ -181,7 +181,7 @@ export function CitaForm({ inicial, onClose, onGuardada }: {
               ))}
             </div>
           ))}
-          {visibles.length === 0 && <div className="empty">No hay tratamientos activos. Agrégalos en Ajustes.</div>}
+          {visibles.length === 0 && <div className="empty">No hay tratamientos activos. Agrégalos en Más → Configuración.</div>}
         </div>
       </div>
 
@@ -196,8 +196,8 @@ export function CitaForm({ inicial, onClose, onGuardada }: {
               <button key={claveDia(d)} type="button" className="chip" aria-pressed={activo}
                 style={{ minHeight: 52, display: 'flex', flexDirection: 'column', justifyContent: 'center', lineHeight: 1.15, opacity: cerrado && !activo ? 0.55 : 1 }}
                 onClick={() => { setDia(d); setInicio(null); setHoraManual(''); setError('') }}>
-                <span style={{ fontSize: 11 }}>{mismoDia(d, ahora) ? 'hoy' : diaCorto(d)}</span>
-                <span style={{ fontSize: 16, fontWeight: 600 }}>{d.getDate()}</span>
+                <span style={{ fontSize: 12 }}>{mismoDia(d, ahora) ? 'hoy' : diaCorto(d)}</span>
+                <span style={{ fontSize: 17, fontWeight: 600 }}>{d.getDate()}</span>
               </button>
             )
           })}

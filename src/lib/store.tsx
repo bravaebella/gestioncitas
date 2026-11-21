@@ -27,7 +27,7 @@ export const AJUSTES_INICIALES: Ajustes = {
   tema: 'auto',
 }
 
-// Catálogo de arranque: precios y tiempos de ejemplo, se cambian en Ajustes.
+// Catálogo de arranque: precios y tiempos de ejemplo, se cambian en Configuración.
 export const CATALOGO_INICIAL: Omit<Tratamiento, 'id'>[] = [
   { tipo: 'manicura', nombre: 'Limpieza y cutícula', duracionMin: 20, precio: 150, activo: true, orden: 1 },
   { tipo: 'manicura', nombre: 'Esmaltado en gel', duracionMin: 40, precio: 300, activo: true, orden: 2 },

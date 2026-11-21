@@ -32,12 +32,12 @@ export function CitaDetalle({ id, onClose }: { id: string; onClose: () => void }
     <Sheet title={clienta.nombre} onClose={onClose}>
       <div className="card card-pad" style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
-          <span style={{ fontSize: 17, fontWeight: 600 }}>{hora(ini)} – {hora(fin)}</span>
+          <span style={{ fontSize: 18.5, fontWeight: 600 }}>{hora(ini)} – {hora(fin)}</span>
           <span className="label">{ETIQUETA_ESTADO[cita.estado]}</span>
         </div>
         <span className="sub">{mayus(fechaLarga(ini))} · {duracion(dur)}</span>
         <span className="sub">{ETIQUETA_TIPO[cita.tipo]}{clienta.telefono ? ` · ${clienta.telefono}` : ''}</span>
-        {cita.notas && <span style={{ fontSize: 14, marginTop: 4 }}>{cita.notas}</span>}
+        {cita.notas && <span style={{ fontSize: 15.5, marginTop: 4 }}>{cita.notas}</span>}
       </div>
 
       <div className="card list">

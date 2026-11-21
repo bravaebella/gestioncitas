@@ -53,13 +53,13 @@ export function Finanzas() {
 
       <div className="kpis">
         <div className="kpi"><span className="label">Ingresos</span><b>{dinero(ingresos, aj.moneda)}</b></div>
-        <div className="kpi"><span className="label">Gastos y costos</span><b>{dinero(egresos, aj.moneda)}</b></div>
+        <div className="kpi"><span className="label">Gastos</span><b>{dinero(egresos, aj.moneda)}</b></div>
         <div className="kpi dark"><span className="label">Ganancia</span><b>{dinero(ganancia, aj.moneda)}</b></div>
       </div>
 
       {porAtender.length > 0 && (
         <div className="card row" style={{ borderRadius: 16, minHeight: 46 }}>
-          <span className="row-main"><span className="row-title" style={{ fontSize: 14 }}>
+          <span className="row-main"><span className="row-title" style={{ fontSize: 15.5 }}>
             Por atender este mes: {porAtender.length} {porAtender.length === 1 ? 'cita' : 'citas'}
           </span></span>
           <span className="row-end">{dinero(pendiente, aj.moneda)}</span>
@@ -82,7 +82,7 @@ export function Finanzas() {
                 <i style={{ width: 8, height: 8, borderRadius: 4, background: COLOR_TIPO[t], display: 'inline-block' }} />
                 {t === 'manicura' ? 'Manicura' : t === 'pedicura' ? 'Pedicura' : 'Ambas'}
               </span>
-              <b style={{ fontSize: 15, fontWeight: 600 }}>{dinero(porTipo[t], aj.moneda)}</b>
+              <b style={{ fontSize: 16.5, fontWeight: 600 }}>{dinero(porTipo[t], aj.moneda)}</b>
             </div>
           ))}
         </div>
@@ -102,7 +102,7 @@ export function Finanzas() {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <i className="hbar" style={{ width: `${(f.ing / maxSemana) * 72}%`, background: 'var(--c-mani)' }} />
-                <span style={{ fontSize: 12, fontWeight: 500 }}>{dinero(f.ing, aj.moneda)}</span>
+                <span style={{ fontSize: 13.5, fontWeight: 500 }}>{dinero(f.ing, aj.moneda)}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <i className="hbar" style={{ width: `${(f.egr / maxSemana) * 72}%`, background: 'var(--c-ambas)' }} />

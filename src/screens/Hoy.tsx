@@ -112,15 +112,15 @@ export function Hoy() {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 10 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
-              <span style={{ fontFamily: 'var(--serif)', fontSize: 24, lineHeight: 1.1 }}>
+              <span style={{ fontFamily: 'var(--serif)', fontSize: 26, lineHeight: 1.1 }}>
                 {hora(new Date(proxima.inicio))} – {hora(new Date(proxima.fin))}
               </span>
-              <span style={{ fontSize: 16, fontWeight: 500 }}>{nombre(proxima)}</span>
-              <span style={{ fontSize: 13, color: 'var(--dark-sub)' }}>
+              <span style={{ fontSize: 17, fontWeight: 500 }}>{nombre(proxima)}</span>
+              <span style={{ fontSize: 14.5, color: 'var(--dark-sub)' }}>
                 {ETIQUETA_TIPO[proxima.tipo]} · {proxima.items.map((i) => i.nombre).join(', ')}
               </span>
             </div>
-            <span style={{ fontSize: 17, fontWeight: 600, whiteSpace: 'nowrap' }}>{dinero(proxima.total, aj.moneda)}</span>
+            <span style={{ fontSize: 18.5, fontWeight: 600, whiteSpace: 'nowrap' }}>{dinero(proxima.total, aj.moneda)}</span>
           </div>
           {habilitados.length > 0 && (
             <div className="tags">
@@ -190,7 +190,7 @@ export function Hoy() {
 
       <a className="card row" style={{ textDecoration: 'none', borderRadius: 16 }} href={`#agenda-${claveDia(manana)}`}>
         <span className="row-main">
-          <span className="row-title" style={{ fontSize: 14 }}>
+          <span className="row-title" style={{ fontSize: 15.5 }}>
             <b>Mañana, {diaSemana(manana)} {manana.getDate()}:</b>{' '}
             {citasManana.length
               ? `${citasManana.length} ${citasManana.length === 1 ? 'cita' : 'citas'}, la primera a las ${hora(new Date(citasManana[0].inicio))}`
