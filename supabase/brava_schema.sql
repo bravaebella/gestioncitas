@@ -522,13 +522,50 @@ create policy "brava portafolio: borrar" on storage.objects
   for delete to authenticated using (bucket_id = 'brava-portafolio' and brava.es_miembro());
 
 -- ============================================================
--- Acceso de la dueña (migraciones brava_acceso_duena_y_borrado_citas
--- y brava_admins_permitidos_cerrada)
+-- Acceso de la dueña y borrado de citas
+-- (migraciones brava_acceso_duena_y_borrado_citas y brava_admins_permitidos_cerrada)
 -- ============================================================
 -- Correos autorizados: al entrar, brava.activar_miembro() agrega a
 -- brava.miembros solo si el correo está aquí y ya fue confirmado.
 -- Para dar acceso a otra persona:
 --   insert into brava.admins_permitidos (email) values ('correo@ejemplo.com');
--- (Definición completa aplicada en Supabase; ver historial de migraciones.)
+create table if not exists brava.admins_permitidos (
+  email text primary key check (email = lower(email)),
+  rol   text not null default 'duena'
+);
 alter table brava.admins_permitidos enable row level security;
 revoke all on brava.admins_permitidos from anon, authenticated;
+insert into brava.admins_permitidos (email) values ('fltp.01062001@outlook.com') on conflict do nothing;
+
+create or replace function brava.activar_miembro()
+returns text language plpgsql security definer set search_path = '' as $$
+declare
+  u   auth.users;
+  ap  brava.admins_permitidos;
+begin
+  select * into u from auth.users where id = (select auth.uid());
+  if u.id is null then return 'sin_sesion'; end if;
+  if exists (select 1 from brava.miembros where user_id = u.id) then return 'miembro'; end if;
+  select * into ap from brava.admins_permitidos where email = lower(u.email);
+  if ap.email is null then return 'no_autorizado'; end if;
+  if u.email_confirmed_at is null then return 'correo_sin_confirmar'; end if;
+  insert into brava.miembros (user_id, rol) values (u.id, ap.rol) on conflict do nothing;
+  return 'miembro';
+end;
+$$;
+revoke all on function brava.activar_miembro() from public, anon;
+grant execute on function brava.activar_miembro() to authenticated;
+
+-- Borrar una cita atendida quita también sus sellos.
+create or replace function brava.citas_borrar_trigger()
+returns trigger language plpgsql security definer set search_path = '' as $$
+begin
+  if old.estado = 'atendida' then
+    perform brava.quitar_sellos(old.id);
+  end if;
+  return old;
+end;
+$$;
+drop trigger if exists citas_borrar_sellos on brava.citas;
+create trigger citas_borrar_sellos before delete on brava.citas
+  for each row execute function brava.citas_borrar_trigger();
