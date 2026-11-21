@@ -4,8 +4,8 @@ import { ConfirmButton } from '../components/ConfirmButton'
 import { Header, Icon, Segmented, Sheet, Switch, useUI } from '../components/ui'
 import { dinero, duracion, uid } from '../lib/format'
 import { exportarRespaldo, useStore } from '../lib/store'
-import { sb } from '../lib/supabase'
-import type { Calendario, Tratamiento, TipoTratamiento } from '../lib/types'
+import { sb, SUPABASE_URL } from '../lib/supabase'
+import type { Tratamiento, TipoTratamiento } from '../lib/types'
 
 const DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb']
 
@@ -25,10 +25,6 @@ export function Ajustes() {
   const aj = db.ajustes
   const [editando, setEditando] = useState<Tratamiento | null>(null)
 
-  const calendarios: { id: Calendario; titulo: string; nota: string }[] = [
-    { id: 'google', titulo: 'Google Calendar', nota: 'Abre Google Calendar con la cita lista para guardar' },
-    { id: 'iphone', titulo: 'iPhone', nota: 'Agrega la cita al Calendario con alarmas de 1 h y 30 min' },
-  ]
 
   const grupos: { tipo: TipoTratamiento; titulo: string }[] = [
     { tipo: 'manicura', titulo: 'Manicura' },
@@ -49,20 +45,7 @@ export function Ajustes() {
           options={[{ value: 'auto', label: 'Automático' }, { value: 'claro', label: 'Claro' }, { value: 'oscuro', label: 'Oscuro' }]} />
       </Seccion>
 
-      <Seccion titulo="Calendario del teléfono">
-        <div className="grid-2" role="radiogroup" aria-label="Calendario">
-          {calendarios.map((c) => {
-            const on = aj.calendario === c.id
-            return (
-              <button key={c.id} type="button" role="radio" aria-checked={on} onClick={() => acc.guardarAjustes({ calendario: c.id })}
-                className="card" style={{ textAlign: 'left', padding: 12, display: 'flex', flexDirection: 'column', gap: 4, borderColor: on ? 'var(--wine)' : undefined, borderWidth: on ? 1.5 : 1, background: on ? 'var(--tint)' : undefined }}>
-                <span style={{ fontWeight: 600, fontSize: 15 }}>{c.titulo}</span>
-                <span className="note">{c.nota}</span>
-              </button>
-            )
-          })}
-        </div>
-      </Seccion>
+      <CalendarioSuscrito />
 
       <Seccion titulo="Recordatorios a la clienta"
         nota="Cuando toca mandar un aviso, aparece en Hoy con el mensaje listo; lo envías con un toque.">
@@ -223,5 +206,40 @@ function EditarTratamiento({ inicial, onClose }: { inicial: Tratamiento; onClose
         </ConfirmButton>
       )}
     </Sheet>
+  )
+}
+
+const CLAVE_CAL = 'brava-calendario-token'
+
+/** Se configura una vez: el Calendario del teléfono trae solo las citas y sus cambios. */
+function CalendarioSuscrito() {
+  const ui = useUI()
+  const [token, setToken] = useState<string | null>(() => { try { return localStorage.getItem(CLAVE_CAL) } catch { return null } })
+  useEffect(() => {
+    sb.from('ajustes').select('calendario_token').maybeSingle().then(({ data }) => {
+      const t = (data as { calendario_token?: string } | null)?.calendario_token
+      if (t) { setToken(t); try { localStorage.setItem(CLAVE_CAL, t) } catch { /* nada */ } }
+    })
+  }, [])
+
+  const https = token ? `${SUPABASE_URL}/functions/v1/brava-calendario?t=${token}` : ''
+  const webcal = https.replace(/^https:/, 'webcal:')
+  const copiar = async () => {
+    try { await navigator.clipboard.writeText(https); ui.avisar('Enlace copiado') } catch { ui.avisar('No se pudo copiar') }
+  }
+
+  return (
+    <Seccion titulo="Calendario del teléfono"
+      nota={<>Se hace una sola vez. Al suscribirte, deja <b>apagado</b> «Eliminar alertas» para que suenen los avisos de 1 h y 30 min. Las citas nuevas, cambiadas o canceladas llegan solas (el iPhone revisa cada pocos minutos).</>}>
+      <a className={'btn btn-primary btn-block'} href={webcal || undefined} aria-disabled={!token}
+        onClick={(e) => { if (!token) { e.preventDefault(); ui.avisar('Necesitas señal la primera vez.') } }}>
+        <Icon name="cal" size={17} /> Suscribir el calendario del iPhone
+      </a>
+      <div className="grid-2">
+        <button type="button" className="btn" disabled={!token} onClick={copiar}>Copiar enlace</button>
+        <a className="btn" href={token ? `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcal)}` : undefined}
+          target="_blank" rel="noopener noreferrer">Google Calendar</a>
+      </div>
+    </Seccion>
   )
 }

@@ -1,6 +1,6 @@
 import { ConfirmButton } from '../components/ConfirmButton'
 import { EnlaceMensaje, Icon, Sheet, useUI } from '../components/ui'
-import { descargarIcs, enlaceGoogle, enlaceMensaje, textoConfirmacion, textoRecordatorio } from '../lib/enlaces'
+import { enlaceMensaje, textoConfirmacion, textoRecordatorio } from '../lib/enlaces'
 import { dinero, duracion, ETIQUETA_ESTADO, ETIQUETA_TIPO, fechaLarga, hora, mayus } from '../lib/format'
 import { useStore } from '../lib/store'
 import type { EstadoCita, MinutosAviso } from '../lib/types'
@@ -54,17 +54,8 @@ export function CitaDetalle({ id, onClose }: { id: string; onClose: () => void }
       </div>
 
       {activa && (
-        <div className="grid-2">
-          {aj.calendario === 'google' ? (
-            <a className="btn" href={enlaceGoogle(cita, clienta, aj)} target="_blank" rel="noopener noreferrer">
-              <Icon name="cal" size={17} /> Al calendario
-            </a>
-          ) : (
-            <button type="button" className="btn" onClick={() => descargarIcs(cita, clienta, aj)}>
-              <Icon name="cal" size={17} /> Al calendario
-            </button>
-          )}
-          <EnlaceMensaje url={url(textoConfirmacion(cita, clienta, aj))} className="btn" ariaLabel={`Enviar confirmación por ${canal}`} sinNumero={sinNumero}>
+        <div>
+          <EnlaceMensaje url={url(textoConfirmacion(cita, clienta, aj))} className="btn btn-block" ariaLabel={`Enviar confirmación por ${canal}`} sinNumero={sinNumero}>
             <Icon name="chat" size={17} /> Confirmar cita
           </EnlaceMensaje>
         </div>
