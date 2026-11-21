@@ -2,7 +2,8 @@ import { useRef, useState } from 'react'
 import { ConfirmButton } from '../components/ConfirmButton'
 import { Header, Icon, Segmented, Sheet, useUI } from '../components/ui'
 import { fechaLarga, mayus } from '../lib/format'
-import { leerArchivo, prepararFoto, useArchivo } from '../lib/media'
+import { prepararFoto, useArchivo } from '../lib/media'
+import { descargarArchivo } from '../lib/remoto'
 import { useStore } from '../lib/store'
 import type { Obra, TipoTratamiento } from '../lib/types'
 
@@ -57,7 +58,7 @@ export function Portafolio() {
 }
 
 function Mosaico({ obra, onClick }: { obra: Obra; onClick: () => void }) {
-  const url = useArchivo(obra.id)
+  const url = useArchivo(obra.ruta)
   return (
     <button type="button" className="tile" onClick={onClick} aria-label={`${obra.titulo || 'Trabajo'}, ${obra.medio}`}>
       {url && (obra.medio === 'video'
@@ -88,14 +89,14 @@ function Subir({ archivos, onClose }: { archivos: File[]; onClose: () => void })
       ui.avisar(archivos.length === 1 ? 'Trabajo agregado' : `${archivos.length} trabajos agregados`)
       onClose()
     } catch {
-      ui.avisar('No se pudo guardar. Puede que el teléfono no tenga espacio.')
+      ui.avisar('No se pudo subir. Revisa la señal e intenta de nuevo.')
       setGuardando(false)
     }
   }
 
   return (
     <Sheet title="Agregar al portafolio" onClose={onClose}
-      footer={<button type="button" className="btn btn-primary btn-block" disabled={guardando} onClick={guardar}>{guardando ? 'Guardando…' : 'Guardar'}</button>}>
+      footer={<button type="button" className="btn btn-primary btn-block" disabled={guardando} onClick={guardar}>{guardando ? 'Subiendo…' : 'Guardar'}</button>}>
       <p className="sub">
         {[fotos ? `${fotos} ${fotos === 1 ? 'foto' : 'fotos'}` : '', videos ? `${videos} ${videos === 1 ? 'video' : 'videos'}` : ''].filter(Boolean).join(' y ')}
       </p>
@@ -113,12 +114,12 @@ function Visor({ id, onClose }: { id: string; onClose: () => void }) {
   const { db, acc } = useStore()
   const ui = useUI()
   const obra = db.portafolio.find((o) => o.id === id)
-  const url = useArchivo(obra ? id : null)
+  const url = useArchivo(obra?.ruta ?? null)
   if (!obra) return null
 
   const compartir = async () => {
     try {
-      const blob = await leerArchivo(id)
+      const blob = await descargarArchivo(obra.ruta)
       if (!blob) return
       const ext = obra.medio === 'video' ? (blob.type.split('/')[1] || 'mp4') : 'jpg'
       const file = new File([blob], `${obra.titulo || 'trabajo'}.${ext}`, { type: blob.type })
@@ -140,7 +141,7 @@ function Visor({ id, onClose }: { id: string; onClose: () => void }) {
       <p className="sub">{obra.tipo === 'manicura' ? 'Manicura' : 'Pedicura'} · {mayus(fechaLarga(new Date(obra.creadoEn)))}</p>
       <div className="grid-2">
         <button type="button" className="btn" onClick={compartir}><Icon name="share" size={17} /> Compartir</button>
-        <ConfirmButton onConfirm={async () => { await acc.borrarObra(id); onClose(); ui.avisar('Trabajo borrado') }}>
+        <ConfirmButton onConfirm={() => { acc.borrarObra(id); onClose(); ui.avisar('Trabajo borrado') }}>
           <Icon name="trash" size={17} /> Borrar
         </ConfirmButton>
       </div>

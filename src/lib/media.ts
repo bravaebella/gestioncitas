@@ -1,7 +1,8 @@
-// Fotos y videos del portafolio guardados en el teléfono (IndexedDB).
-// Al conectar Supabase, esto se reemplaza por el bucket `brava-portafolio`.
+// Fotos y videos del portafolio: se ven desde el bucket privado `brava-portafolio`.
+// IndexedDB queda solo para leer lo que guardó la versión anterior y subirlo.
 
 import { useEffect, useState } from 'react'
+import { urlFirmada } from './remoto'
 
 const DB_NOMBRE = 'brava-media'
 const ALMACEN = 'archivos'
@@ -46,23 +47,14 @@ export async function prepararFoto(file: File): Promise<Blob> {
   }
 }
 
-export function useArchivo(id: string | null) {
+/** Enlace para mostrar un archivo del portafolio (vale una hora). */
+export function useArchivo(ruta: string | null) {
   const [url, setUrl] = useState<string | null>(null)
   useEffect(() => {
-    if (!id) return
+    if (!ruta) return
     let vivo = true
-    let creada: string | null = null
-    leerArchivo(id)
-      .then((blob) => {
-        if (!vivo || !blob) return
-        creada = URL.createObjectURL(blob)
-        setUrl(creada)
-      })
-      .catch(() => {})
-    return () => {
-      vivo = false
-      if (creada) URL.revokeObjectURL(creada)
-    }
-  }, [id])
+    urlFirmada(ruta).then((u) => { if (vivo) setUrl(u) }).catch(() => {})
+    return () => { vivo = false }
+  }, [ruta])
   return url
 }

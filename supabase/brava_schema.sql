@@ -520,3 +520,15 @@ create policy "brava portafolio: cambiar" on storage.objects
   with check (bucket_id = 'brava-portafolio' and brava.es_miembro());
 create policy "brava portafolio: borrar" on storage.objects
   for delete to authenticated using (bucket_id = 'brava-portafolio' and brava.es_miembro());
+
+-- ============================================================
+-- Acceso de la dueña (migraciones brava_acceso_duena_y_borrado_citas
+-- y brava_admins_permitidos_cerrada)
+-- ============================================================
+-- Correos autorizados: al entrar, brava.activar_miembro() agrega a
+-- brava.miembros solo si el correo está aquí y ya fue confirmado.
+-- Para dar acceso a otra persona:
+--   insert into brava.admins_permitidos (email) values ('correo@ejemplo.com');
+-- (Definición completa aplicada en Supabase; ver historial de migraciones.)
+alter table brava.admins_permitidos enable row level security;
+revoke all on brava.admins_permitidos from anon, authenticated;

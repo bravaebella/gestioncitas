@@ -1,8 +1,10 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { cerrarSesion } from '../components/Acceso'
 import { ConfirmButton } from '../components/ConfirmButton'
 import { Header, Icon, Segmented, Sheet, Switch, useUI } from '../components/ui'
 import { dinero, duracion, uid } from '../lib/format'
 import { exportarRespaldo, useStore } from '../lib/store'
+import { sb } from '../lib/supabase'
 import type { Calendario, Tratamiento, TipoTratamiento } from '../lib/types'
 
 const DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb']
@@ -18,11 +20,10 @@ function Seccion({ titulo, children, nota }: { titulo: string; children: ReactNo
 }
 
 export function Ajustes() {
-  const { db, acc } = useStore()
+  const { db, acc, pendientes, carga } = useStore()
   const ui = useUI()
   const aj = db.ajustes
   const [editando, setEditando] = useState<Tratamiento | null>(null)
-  const archivo = useRef<HTMLInputElement>(null)
 
   const calendarios: { id: Calendario; titulo: string; nota: string }[] = [
     { id: 'google', titulo: 'Google Calendar', nota: 'Abre Google Calendar con la cita lista para guardar' },
@@ -34,10 +35,8 @@ export function Ajustes() {
     { tipo: 'pedicura', titulo: 'Pedicura' },
   ]
 
-  const restaurar = async (f: File) => {
-    const r = acc.importar(await f.text())
-    ui.avisar(r.ok ? 'Respaldo restaurado' : r.error)
-  }
+  const [correo, setCorreo] = useState<string | null>(null)
+  useEffect(() => { sb.auth.getUser().then(({ data }) => setCorreo(data.user?.email ?? null)).catch(() => {}) }, [])
 
   return (
     <main className="screen">
@@ -154,27 +153,22 @@ export function Ajustes() {
         </div>
       </Seccion>
 
-      <Seccion titulo="Respaldo"
-        nota="Por ahora los datos viven solo en este teléfono. Guarda un respaldo de vez en cuando (por ejemplo en Archivos); las fotos y videos no van incluidos.">
+      <Seccion titulo="Cuenta" nota="Tus datos se guardan en la nube: si cambias de teléfono, entra con el mismo correo.">
+        <div className="card row">
+          <span className="row-main">
+            <span className="row-title">{correo ?? 'Sesión iniciada'}</span>
+            <span className={'nube-estado'} data-estado={pendientes ? 'pendiente' : 'ok'}>
+              {pendientes ? `${pendientes} ${pendientes === 1 ? 'cambio espera' : 'cambios esperan'} señal para subir` : carga === 'sin_conexion' ? 'Sin conexión: usando la copia del teléfono' : 'Todo guardado en la nube'}
+            </span>
+          </span>
+        </div>
         <div className="grid-2">
           <button type="button" className="btn" onClick={async () => {
             const r = await exportarRespaldo(db)
             if (r === 'descargado') ui.avisar('Respaldo descargado')
           }}>Guardar respaldo</button>
-          <button type="button" className="btn" onClick={() => archivo.current?.click()}>Restaurar respaldo</button>
-        </div>
-        <input ref={archivo} type="file" accept="application/json,.json" className="hidden-input" tabIndex={-1} aria-hidden="true"
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) restaurar(f); e.target.value = '' }} />
-      </Seccion>
-
-      <Seccion titulo="Datos de prueba">
-        <div className="grid-2">
-          <button type="button" className="btn" disabled={db.citas.length > 0}
-            onClick={() => { acc.cargarEjemplo(); ui.avisar('Datos de ejemplo cargados') }}>
-            Cargar ejemplo
-          </button>
-          <ConfirmButton confirmar="¿Borrar todo?" onConfirm={() => { acc.borrarTodo(); ui.avisar('Se borraron citas, clientas y gastos') }}>
-            Borrar todo
+          <ConfirmButton confirmar={pendientes ? '¿Perder cambios sin subir?' : '¿Cerrar sesión?'} onConfirm={() => { void cerrarSesion() }}>
+            Cerrar sesión
           </ConfirmButton>
         </div>
       </Seccion>

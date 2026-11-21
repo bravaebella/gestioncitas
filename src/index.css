@@ -534,3 +534,24 @@ textarea.input { height: auto; min-height: 64px; padding: 10px 12px; resize: ver
   .splash.saliendo { animation-duration: 0.2s; }
   .splash-brillo-fondo { animation: none; }
 }
+
+/* ——— Entrada (login) ——— */
+.acceso {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: calc(var(--safe-top) + 24px) 24px calc(env(safe-area-inset-bottom) + 24px);
+  background: var(--splash-bg);
+}
+.acceso-logo { width: min(64vw, 250px); height: auto; }
+.acceso-caja { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 12px; }
+.acceso-titulo { font-family: var(--serif); font-weight: 500; font-size: 22px; color: var(--title); text-align: center; margin: 0; }
+.acceso-enlaces { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+
+/* ——— Subir datos del teléfono ——— */
+.nube-estado { font-size: 12px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.nube-estado::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--c-pedi); }
+.nube-estado[data-estado='pendiente']::before { background: var(--dash); }

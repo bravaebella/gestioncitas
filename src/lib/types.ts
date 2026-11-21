@@ -1,5 +1,5 @@
 // Mismo modelo que el esquema `brava` de Supabase (brava_schema.sql),
-// para que conectar la base después sea un cambio de capa, no de pantallas.
+// Las pantallas usan este modelo; remoto.ts lo traduce a las tablas.
 
 export type TipoTratamiento = 'manicura' | 'pedicura'
 export type TipoCita = TipoTratamiento | 'ambas'
@@ -66,6 +66,8 @@ export interface Obra {
   titulo: string
   tipo: TipoTratamiento
   medio: 'foto' | 'video'
+  /** Ruta del archivo en el bucket `brava-portafolio`. */
+  ruta: string
   creadoEn: string
 }
 

@@ -13,7 +13,7 @@
     <title>Brava e' Bella Nail's Studio</title>
     <script>
       try {
-        var t = (JSON.parse(localStorage.getItem('brava-db-v1') || '{}').ajustes || {}).tema || 'auto'
+        var t = (JSON.parse(localStorage.getItem('brava-cache-v2') || localStorage.getItem('brava-db-v1') || '{}').ajustes || {}).tema || 'auto'
         var o = t === 'oscuro' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches)
         document.documentElement.dataset.theme = o ? 'dark' : 'light'
         document.querySelector('meta[name="theme-color"]').setAttribute('content', o ? '#0e0a0b' : '#fbf3f1')

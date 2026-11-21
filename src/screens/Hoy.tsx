@@ -186,10 +186,7 @@ export function Hoy() {
 
       {db.citas.length === 0 && (
         <div className="card empty">
-          <span>Aún no hay citas guardadas. Puedes empezar a agendar o ver cómo luce la app con datos de prueba.</span>
-          <button type="button" className="btn" onClick={() => { acc.cargarEjemplo(); ui.avisar('Datos de ejemplo cargados. Bórralos en Ajustes.') }}>
-            Ver con datos de ejemplo
-          </button>
+          <span>Aún no hay citas. Agenda la primera con el botón +.</span>
         </div>
       )}
 
