@@ -602,3 +602,9 @@ end;
 $$;
 revoke all on function brava.calendario_citas(text) from public, anon, authenticated;
 grant execute on function brava.calendario_citas(text) to service_role;
+
+-- Rol de desarrollador (migración brava_rol_desarrollador): mismo acceso que la dueña.
+alter table brava.miembros drop constraint if exists miembros_rol_check;
+alter table brava.miembros add constraint miembros_rol_check check (rol in ('duena', 'asistente', 'desarrollador'));
+alter table brava.admins_permitidos drop constraint if exists admins_permitidos_rol_check;
+alter table brava.admins_permitidos add constraint admins_permitidos_rol_check check (rol in ('duena', 'asistente', 'desarrollador'));
