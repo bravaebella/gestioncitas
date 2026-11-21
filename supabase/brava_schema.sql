@@ -569,3 +569,36 @@ $$;
 drop trigger if exists citas_borrar_sellos on brava.citas;
 create trigger citas_borrar_sellos before delete on brava.citas
   for each row execute function brava.citas_borrar_trigger();
+
+-- ============================================================
+-- Calendario del teléfono por suscripción
+-- (migraciones brava_calendario_suscripcion y brava_service_role_uso_esquema)
+-- La función Edge supabase/functions/brava-calendario sirve el .ics.
+-- ============================================================
+alter table brava.ajustes
+  add column if not exists calendario_token text not null default encode(extensions.gen_random_bytes(18), 'hex');
+grant usage on schema brava to service_role;
+
+create or replace function brava.calendario_citas(p_token text)
+returns jsonb language plpgsql stable security definer set search_path = '' as $$
+declare
+  aj brava.ajustes;
+begin
+  select * into aj from brava.ajustes where calendario_token = p_token;
+  if aj.id is null or length(p_token) < 20 then return null; end if;
+  return jsonb_build_object(
+    'nombre', aj.nombre_estudio, 'moneda', aj.moneda, 'aviso60', aj.aviso_60, 'aviso30', aj.aviso_30,
+    'citas', coalesce((
+      select jsonb_agg(jsonb_build_object(
+        'id', c.id, 'tipo', c.tipo, 'inicio', c.inicio, 'fin', c.fin, 'estado', c.estado,
+        'total', c.precio_total, 'notas', c.notas, 'clienta', cl.nombre, 'telefono', cl.telefono,
+        'items', (select coalesce(jsonb_agg(ct.nombre), '[]'::jsonb) from brava.cita_tratamientos ct where ct.cita_id = c.id)
+      ) order by c.inicio)
+      from brava.citas c join brava.clientas cl on cl.id = c.clienta_id
+      where c.estado in ('agendada', 'atendida') and c.inicio > now() - interval '60 days'
+    ), '[]'::jsonb)
+  );
+end;
+$$;
+revoke all on function brava.calendario_citas(text) from public, anon, authenticated;
+grant execute on function brava.calendario_citas(text) to service_role;
